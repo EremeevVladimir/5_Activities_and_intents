@@ -22,10 +22,11 @@ public class SettingsActivity extends AppCompatActivity implements Constants{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
+        initView();
+
         account = getIntent().getExtras().getParcelable(YOUR_ACCOUNT);
 
-        initView();
-        inflateView();
+        populateView();
     }
 
     private void initView() {
@@ -38,14 +39,26 @@ public class SettingsActivity extends AppCompatActivity implements Constants{
         btnReturn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent intentResult = new Intent();
+                intentResult.putExtra(YOUR_ACCOUNT, createAccount());
+                setResult(RESULT_OK, intentResult);
                 finish();
             }
         });
     }
-    private void inflateView() {
+    private void populateView() {
         editName.setText(account.getName());
         editSurname.setText(account.getSurName());
         editAge.setText(String.format(Locale.getDefault(), "%d", account.getAge()));
         editEmail.setText(account.getEmail());
+    }
+
+    private Account createAccount() {
+        Account account = new Account(
+          editName.getText().toString(),
+          editSurname.getText().toString(),
+          Integer.parseInt(editAge.getText().toString()),
+                editEmail.getText().toString());
+        return account;
     }
 }

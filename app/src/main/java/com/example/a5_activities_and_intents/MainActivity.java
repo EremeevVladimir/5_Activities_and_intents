@@ -15,6 +15,8 @@ public class MainActivity extends AppCompatActivity implements Constants {
     private TextInputEditText txtName;
     private Account account;
 
+    private static final int REQUEST_CODE_SETTING_ACTIVITY = 99;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,17 +44,33 @@ public class MainActivity extends AppCompatActivity implements Constants {
         btnSettings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                saveName();
+                populateAccount();
                 Intent runSettings = new Intent(MainActivity.this, SettingsActivity.class);
                 runSettings.putExtra(YOUR_ACCOUNT, account);
 
-                startActivity(runSettings);
+                startActivityForResult(runSettings, REQUEST_CODE_SETTING_ACTIVITY);
             }
         });
     }
 
-    private void saveName() {
+    private void populateAccount() {
         account.setName(txtName.getText().toString());
     }
+
+    protected void onActivityResult (int requestCode, int resultCode, Intent data) {
+        if (requestCode != REQUEST_CODE_SETTING_ACTIVITY) {
+            super.onActivityResult(requestCode, resultCode, data);
+            return;
+        }
+        if (resultCode == RESULT_OK) {
+            account = data.getExtras().getParcelable(YOUR_ACCOUNT);
+            populateView();
+        }
+    }
+
+    private void populateView() {
+        txtName.setText(account.getName());
+    }
+
 
 }
